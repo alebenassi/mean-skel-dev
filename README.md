@@ -1,1 +1,1 @@
-Solved ejercice of techinal inverview.
+Exercise solved of technical interview.
