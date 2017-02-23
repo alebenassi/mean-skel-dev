@@ -1,0 +1,18 @@
+
+<div class="row events-header">
+	<div class="col-xs-2 eventinfo">Date</div>
+	<div class="col-xs-2 eventinfo">Title</div>
+	<div class="col-xs-3 eventinfo">Description</div>
+	<div class="col-xs-3 eventinfo">Creator</div>
+	<div class="col-xs-2 eventinfo">Options</div>
+</div>
+
+
+
+<div class="row events" ng-repeat="event in events | filter:{'active':  true} | filter:search | orderBy: 'date' " ng-if="(currentDate | date:'yyyy/MM/dd hh:mm:ss') <= (event.date | date: 'yyyy/MM/dd hh:mm:ss')">
+	<div class="eventinfo col-xs-2">{{event.date | date:"dd/MM/yyyy 'at' h:mma"}}</div>	
+	<div class="eventinfo col-xs-2">{{event.title}}</div>
+	<div class="eventinfo col-xs-3">{{event.description}}</div>
+	<div class="eventinfo col-xs-3">{{event.userFirstname}} {{event.userLastname}}</div>
+	<div class="eventinfo col-xs-2" ng-show="event.active"><a href="/accept-event/{{event._id}}/{{currentId}}">Accept </a> | <a href="/reject-event/{{event._id}}/{{currentId}}">Reject</a></div>	
+</div>

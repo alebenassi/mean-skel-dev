@@ -1,0 +1,21 @@
+<div class="row">
+  <div class="col-xs-12">
+  	<a href="/new-event" style="font-size: 18px;">New Event</a>
+  </div>	
+</div>
+
+
+<div class="row events-header">
+	<div class="col-xs-3 eventinfo">Date</div>
+	<div class="col-xs-3 eventinfo">Title</div>
+	<div class="col-xs-3 eventinfo">Description</div>
+	<div class="col-xs-3 eventinfo">Options</div>
+</div>
+
+<div class="row events" ng-class="{canceled: !event.active}" ng-repeat="event in events | filter:{'user':  currentId} | orderBy: 'date' " ng-if="(currentDate | date:'yyyy/MM/dd hh:mm:ss') <= (event.date | date: 'yyyy/MM/dd hh:mm:ss')">
+	<div class="eventinfo  col-xs-3">{{ event.date | date:"dd/MM/yyyy 'at' h:mma"}}</div>
+	<div class="eventinfo col-xs-3">{{event.title}}</div>
+	<div class="eventinfo col-xs-3">{{event.description}}</div>
+	<div class="eventinfo col-xs-3" ng-show="event.active"><a href="/event/{{event._id}}">Edit </a> | <a href="/cancel-event/{{event._id}}">Cancel</a></div>
+	<div class="eventinfo col-xs-3" ng-show="!event.active">Event Canceled</div>
+</div>

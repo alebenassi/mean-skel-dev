@@ -1,0 +1,41 @@
+<div class="row col-sm-6 col-sm-offset-3">
+  <div class="jumbotron">
+    <h1>New Event</h1>
+    <form ng-submit="createEventForm.$valid && event.saveEvent()" name="createEventForm" novalidate>
+    	<div class="form-group">
+			<label>Title</label>
+			<input type="text" class="form-control" name="title" ng-model="event.eventData.title" required>
+			<div ng-show="createEventForm.$submitted" ng-messages="createEventForm.title.$error" ng-messages-include="/app/views/shared/formMessages.html"></div>
+		</div>
+
+		<div class="form-group">
+			<label>Description</label>
+			<textarea class="form-control" name="description" ng-model="event.eventData.description" required></textarea>						
+			<div ng-show="createEventForm.$submitted" ng-messages="createEventForm.description.$error" ng-messages-include="/app/views/shared/formMessages.html"></div>
+		</div>		
+		 		
+
+		<div class="form-group">
+			<label>Date</label>
+			<input type="datetime-local" class="form-control date" name="date" ng-model="event.eventData.date" required min="{{currentDate}}">
+			<div ng-show="createEventForm.$submitted" ng-messages="createEventForm.date.$error" ng-messages-include="/app/views/shared/formMessages.html"></div>
+			<span ng-show="createEventForm.date.$error.min">Date must not be less than current date</span>
+		</div>		
+
+		<div class="form-group">
+			<label>Guest List</label><br>
+			 <select name="guestList" id="guestList" ng-model="event.eventData.guestList" multiple="multiple" required>		      
+		      	<option ng-repeat="option in guestList | filter:{'_id':  '!' + currentId} | filter:{'active':  'true'} "" value="{{option._id}}">{{option.firstname}} {{option.lastname}} - {{option.email}} </option>
+		    </select>		    
+		    
+		</div>		
+
+
+
+	      <button type="submit" class="btn btn-block btn-primary" ng-disabled="event.processing">
+	        <span ng-if="!event.processing">Create</span>
+	        <span ng-if="event.processing" class="spinner"><span class="glyphicon glyphicon-repeat"></span></span>
+	      </button>	      
+    </form>
+  </div>
+</div>

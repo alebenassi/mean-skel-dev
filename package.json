@@ -1,0 +1,56 @@
+{
+  "name": "mean-skel",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "NODE_ENV=test jenkins-mocha --cobertura test",
+    "cover": "NODE_ENV=test istanbul cover _mocha",
+    "postinstall": "grunt createConfig && node_modules/bower/bin/bower install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LateralView/mean-skel.git"
+  },
+  "author": "LateralView",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LateralView/mean-skel/issues"
+  },
+  "homepage": "https://github.com/LateralView/mean-skel.git",
+  "dependencies": {
+    "aws-sdk": "^2.2.19",
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.14.1",
+    "express": "^4.13.3",
+    "grunt": "0.4.5",
+    "grunt-apidoc": "^0.10.1",
+    "grunt-bbb-requirejs": "0.1.0-alpha.8",
+    "grunt-cli": "0.1.13",
+    "grunt-ng-constant": "^1.1.0",
+    "jsonwebtoken": "^5.4.1",
+    "lodash": "^4.16.4",
+    "matchdep": "^1.0.0",
+    "mongoose": "^4.3.7",
+    "morgan": "^1.6.1",
+    "multer": "^0.1.8",
+    "sendgrid": "^2.0.0",
+    "shortid": "^2.2.4",
+    "sinon": "^1.17.6"
+  },
+  "devDependencies": {
+    "async": "^1.5.0",
+    "bower": "^1.6.8",
+    "chai": "^3.0.0",
+    "factory-girl": "^3.2.0-beta",
+    "factory-girl-mongoose": "^1.0.0",
+    "faker": "^3.0.1",
+    "istanbul": "^0.4.2",
+    "jenkins-mocha": "^2.5.0",
+    "mocha": "^2.2.5",
+    "mocha-lcov-reporter": "^1.0.0",
+    "mongodb-uri": "^0.9.7",
+    "nock": "^7.0.2",
+    "supertest": "^1.1.0"
+  }
+}

@@ -1,0 +1,43 @@
+<div class="row col-sm-6 col-sm-offset-3">
+  <div class="jumbotron">
+    <h1>Edit Event</h1>
+    <form ng-submit="editEventForm.$valid && saveEvent(event)" name="editEventForm" novalidate>
+    	<div class="form-group">
+			<label>Title</label>			
+			<input type="text" class="form-control" name="title" ng-model="event.title" required>
+			<div ng-show="editEventForm.$submitted" ng-messages="editEventForm.title.$error" ng-messages-include="/app/views/shared/formMessages.html"></div>
+		</div>
+
+		<div class="form-group">
+			<label>Description</label>
+			<textarea class="form-control" name="description" ng-model="event.description" required></textarea>						
+			<div ng-show="editEventForm.$submitted" ng-messages="editEventForm.description.$error" ng-messages-include="/app/views/shared/formMessages.html"></div>
+		</div>		
+		 		
+
+		<div class="form-group">
+			<label>Date</label><br>
+			{{event.date | date: "dd/mm/yyyy 'at' h:mma"}}			
+		</div>			
+
+		<div class="form-group">
+			<label>Guest List</label><br>
+			<div  ng-repeat="guest in guestList">			 
+				{{guest.firstname}} {{guest.lastname}} - Invitation: <b ng-switch="guest.accepted">
+  																			<span ng-switch-when="0">Pending</span>
+  																			<span ng-switch-when="1">Accepted</span>  
+  																			<span ng-switch-when="2">Rejected</span>  
+																		</b>
+			</div>
+
+		</div>		
+
+
+
+	      <button type="submit" class="btn btn-block btn-primary" ng-disabled="event.processing">
+	        <span ng-if="!event.processing">Edit</span>
+	        <span ng-if="event.processing" class="spinner"><span class="glyphicon glyphicon-repeat"></span></span>
+	      </button>	      
+    </form>
+  </div>
+</div>
