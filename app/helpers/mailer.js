@@ -81,8 +81,7 @@ function rejectInvitationEmail(userReject,userEvent, event, done) {
 	}
 }
 
-function acceptInvitationEmail(userAccept, userEvent, event, done) {		
-
+function acceptInvitationEmail(userAccept, userEvent, event, done) {			
 
 	try {		
 		
@@ -110,6 +109,7 @@ function acceptInvitationEmail(userAccept, userEvent, event, done) {
 
 function cancelEventEmail(user, event, done) {	
 
+	
 	
 	try {		
 

@@ -119,14 +119,26 @@ UserSchema.statics.activateAccount = function(token, callback) {
 };
 
 
-UserSchema.statics.get = function(filters, callback) {  
-  this.find(filters).select("+active").exec(function(err, users){
+UserSchema.statics.get = function(callback) {  
+  this.find().select("+active").exec(function(err, users){
       callback(err, users);
     });
 };
 
-UserSchema.statics.getUser = function(user_id, selectFields, callback) {
-  this.findOne({_id : user_id}).select(selectFields).exec(function(err, user){
+UserSchema.statics.getActiveUsers = function(callback) {  
+  this.find({active:true}).select("+active").exec(function(err, users){
+      callback(err, users);
+    });
+};
+
+UserSchema.statics.getUser = function(user_id, callback) {
+  this.findOne({_id : user_id}).exec(function(err, user){
+      callback(err, user);
+  });
+};
+
+UserSchema.statics.getEventUser = function(user_id, callback) {
+  this.findOne({_id : user_id}).select("-_id -picture").exec(function(err, user){
       callback(err, user);
   });
 };

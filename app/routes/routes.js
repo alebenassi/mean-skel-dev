@@ -24,8 +24,10 @@ function setup(app, handlers) {
   // With Token authentication
   userRouter.use(token_authentication);
   userRouter.put("/", handlers.users.updateCurrentUser);
-  userRouter.post("/get", handlers.users.get);
+  userRouter.get("/get", handlers.users.get);
   userRouter.post("/getUser", handlers.users.getUser);
+  userRouter.post("/getEventUser", handlers.users.getEventUser);
+  userRouter.get("/getActiveUsers", handlers.users.getActiveUsers);
 
   app.use("/api/user", userRouter);
 
@@ -42,7 +44,10 @@ function setup(app, handlers) {
   eventsRouter.post("/cancelEvent", handlers.events.cancelEvent);
   eventsRouter.post("/acceptEvent", handlers.events.acceptEvent); 
   eventsRouter.post("/rejectEvent", handlers.events.rejectEvent); 
-  eventsRouter.post("/get", handlers.events.get); 
+  //eventsRouter.post("/get", handlers.events.get); 
+  eventsRouter.get("/getMyEvents", handlers.events.getMyEvents); 
+  eventsRouter.get("/getPendingEvents", handlers.events.getPendingEvents); 
+  eventsRouter.get("/getUpcomingEvents", handlers.events.getUpcomingEvents); 
 
   app.use("/api/events", eventsRouter);  
   

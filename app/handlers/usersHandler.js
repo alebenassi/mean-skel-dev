@@ -322,7 +322,7 @@ function activateAccount(req, res) {
  *
  */
 function get(req, res) {   	
-    User.get(req.body.filters, function(err, users){
+    User.get(function(err, users){
 	  if (err){
         return res.status(400).send(errors.newError(errors.errorsEnum.CantGetUser, err))
       }
@@ -334,6 +334,48 @@ function get(req, res) {
         message: "Users get.",
         users: users
       });    	
+    });
+
+}
+
+/**
+ * @api {get} /api/users/getActiveUsers Get active users
+ * @apiName user_get
+ * @apiGroup Users
+ * @apiVersion 0.1.0
+ * 
+ *
+ * @apiSuccessExample Success-Response
+ *    HTTP/1.1 200 OK
+ *    {
+ *      message:  "Active Users Get."
+ *    }
+ *
+ * @apiError CantGetUser There was a problem at getting active users
+ *
+ * @apiErrorExample Error-Response
+ *    HTTP/1.1 400 Bad Request
+ *    {
+ *      code: 1009000,
+ *      message: "There was a problem at getting active users.",
+ *      detail: {},
+ *      errors: []
+ *    }
+ *
+ */
+function getActiveUsers(req, res) {    
+    User.getActiveUsers(function(err, users){
+    if (err){
+        return res.status(400).send(errors.newError(errors.errorsEnum.CantGetActiveUsers, err))
+      }
+      if (!users) {
+        return res.status(401).json(errors.newError(errors.errorsEnum.CantGetActiveUsers));
+      }   
+
+      res.json({
+        message: "Active Users get.",
+        users: users
+      });     
     });
 
 }
@@ -351,7 +393,7 @@ function get(req, res) {
  *      message:  "User Get."
  *    }
  *
- * @apiError CantGetEvent There was a problem at getting user
+ * @apiError CantGetUser There was a problem at getting user
  *
  * @apiErrorExample Error-Response
  *    HTTP/1.1 400 Bad Request
@@ -365,7 +407,7 @@ function get(req, res) {
  */
 function getUser(req, res) {  
 
-  User.getUser(req.body.user_id, req.body.select, function(err, user) {  
+  User.getUser(req.body.user_id, function(err, user) {  
 	  if (err){
 	    return res.status(400).send(errors.newError(errors.errorsEnum.CantGetUser, err))
 	  }
@@ -380,9 +422,53 @@ function getUser(req, res) {
     });
 }
 
+/**
+ * @api {post} /api/users/getEventUser Get event user
+ * @apiName userGet
+ * @apiGroup Users
+ * @apiVersion 0.1.0
+ * 
+ *
+ * @apiSuccessExample Success-Response
+ *    HTTP/1.1 200 OK
+ *    {
+ *      message:  "Get event user."
+ *    }
+ *
+ * @apiError CantGetEventUser There was a problem at getting event user
+ *
+ * @apiErrorExample Error-Response
+ *    HTTP/1.1 400 Bad Request
+ *    {
+ *      code: 1008000,
+ *      message: "There was a problem at getting event user.",
+ *      detail: {},
+ *      errors: []
+ *    }
+ *
+ */
+function getEventUser(req, res) {  
+
+  User.getEventUser(req.body.user_id, function(err, user) {  
+	  if (err){
+	    return res.status(400).send(errors.newError(errors.errorsEnum.CantGetEventUser, err))
+	  }
+	  if (!user) {
+	    return res.status(401).json(errors.newError(errors.errorsEnum.CantGetEventUser));
+	  }       
+
+	  res.json({
+	    message: "Event User get.",
+	    user: user.asJson()
+	  });
+    });
+}
+
 exports.authenticate = authenticate;
 exports.createUser = createUser;
 exports.updateCurrentUser = updateCurrentUser;
 exports.activateAccount = activateAccount;
 exports.get = get;
 exports.getUser = getUser;
+exports.getEventUser = getEventUser;
+exports.getActiveUsers = getActiveUsers;

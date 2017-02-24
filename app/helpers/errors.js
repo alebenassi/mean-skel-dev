@@ -45,23 +45,48 @@ var errorsEnum = {
     CantGetUser: {code: 1000600, message: "Can't get users."}, 
 
     //Get Events
-    CantGetEvent: {code: 1000700, message: "Can't get events."},    
+    CantGetEvent: {code: 1000700, message: "Can't get events"},    
+    InvalidAuthorizationGetEvent: {code: 1000701, message: "Invalid authorization, you can't get event."},    
+    CantGetEventCancelled: {code: 1000702, message: "Can't get event that has already been cancelled."},    
 
 
     //Update Events
     CantUpdateEvent: {code: 1000800, message: "Can't update event."},
+    InvalidAuthorizationUpateEvent: {code: 1000801, message: "Invalid authorization, you can't update event"},
+    CantUpdateEventCancelled: {code: 1000802, message: "Can't update event cancelled."},
 
     //Cancel Event
     CantCancelEvent: {code: 1001000, message: "Can't cancel event."},
+    InvalidAuthorizationCancelEvent: {code: 1001001, message: "Invalid authorization, you can't cancel event."},
+    CantCancelEventCancelled: {code: 1001002, message: "Can't cancel event that has already been cancelled."},
 
     //Accept Event
     CantAcceptEvent: {code: 1002000, message: "Can't accept event."},
+    InvalidAuthorizationAcceptEvent: {code: 1002001, message: "Invalid authorization, you can't accept event without invitation."},
+    CantAcceptEventCancelled: {code: 1002002, message: "Can't accept invitation to an event that has already been cancelled."},
 
     //Reject Event
     CantRejectEvent: {code: 1003000, message: "Can't reject event."},
+    InvalidAuthorizationRejectEvent: {code: 1003001, message: "Invalid authorization, you can't reject event without invitation."},
+    CantRejectEventCancelled: {code: 1003002, message: "Can't reject invitation to an event that has already been cancelled."},
 
     //Send Mail
-    CantSendMail: {code: 1004000, message: "Can't send mail."}
+    CantSendMail: {code: 1004000, message: "Can't send mail."},
+
+    //Get My Events
+    CantGetMyEvents: {code: 1005000, message: "Can't get my events."},
+
+    //Get Upcoming Events
+    CantGetUpcomingEvents: {code: 1006000, message: "Can't get upcoming events."},
+
+    //Get Pending Events
+    CantGetPendingEvents: {code: 1007000, message: "Can't get pending events."},
+
+    //Get Pending Events
+    CantGetEventUser: {code: 1008000, message: "Can't get event user."},
+
+    //Get Active User
+    CantGetActiveUsers: {code: 1009000, message: "Can't get active users."}
 
 };
 

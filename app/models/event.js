@@ -22,21 +22,6 @@ var EventSchema = new Schema({
 });
 
 
-/*EventSchema.pre("save", function(next) {
-    this.wasNew = this.isNew;
-    next();
-});
-
-// Send welcome email with activation link
-EventSchema.post("save", function(event) {
-  if (event.wasNew) {    
-      mailer.sendInvitationEmail(event, function(error){
-      // TODO: Handle error if exists
-      });
-  }
-});
-*/
-
 
 
 EventSchema.plugin(require("./plugins/foregroundIndexesPlugin"));
@@ -54,10 +39,28 @@ EventSchema.methods.asJson = function() {
 };
 
 
-EventSchema.statics.get = function(filters, callback) {  
-  this.find(filters).exec(function(err, events){  
+EventSchema.statics.get = function(callback) {  
+  this.find().exec(function(err, events){  
       callback(err, events);
     
+    });
+};
+
+EventSchema.statics.getMyEvents = function(currentUser, callback) {  
+  this.find({user: currentUser._id, date: {$gte: new Date()}}).exec(function(err, events){  
+      callback(err, events);    
+    });
+};
+
+EventSchema.statics.getPendingEvents = function(currentUser, callback) {  
+  this.find({active: true, date: {$gte: new Date()},guestList: {'_id': currentUser._id, 'accepted': 0}}).exec(function(err, events){  
+      callback(err, events);    
+    });
+};
+
+EventSchema.statics.getUpcomingEvents = function(currentUser, callback) {  
+  this.find({ active: true, date: {"$gte": new Date()},"$or": [{guestList: {'_id': currentUser._id, 'accepted': 1}}, {user:currentUser._id}]}).exec(function(err, events){  
+      callback(err, events);    
     });
 };
 
