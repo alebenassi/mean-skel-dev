@@ -75,11 +75,7 @@ angular.module("app.routes", ["ngRoute"])
         controller: "eventRejectController",
         controllerAs: "event",
         authenticate: true
-      })  
-
-      /*AGENDA*/
-
-
+      })        
 
       /*PENDING*/
       .when("/pending", {

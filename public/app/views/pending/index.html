@@ -9,7 +9,7 @@
 
 
 
-<div class="row events" ng-repeat="event in events | filter:{'active':  true} | filter:search | orderBy: 'date' " ng-if="(currentDate | date:'yyyy/MM/dd hh:mm:ss') <= (event.date | date: 'yyyy/MM/dd hh:mm:ss')">
+<div class="row events" ng-repeat="event in events | orderBy: 'date' " >
 	<div class="eventinfo col-xs-2">{{event.date | date:"dd/MM/yyyy 'at' h:mma"}}</div>	
 	<div class="eventinfo col-xs-2">{{event.title}}</div>
 	<div class="eventinfo col-xs-3">{{event.description}}</div>

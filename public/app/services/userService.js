@@ -18,13 +18,13 @@ angular.module("services")
 		};
 
 		// get users
-		userFactory.getUsers = function() {
-			return $http.get(config.api_url + "/users/get");
+		userFactory.getUsers = function(filters) {
+			return $http.post(config.api_url + "/user/get", {filters:filters});
 		};
 
 		// get user
-		userFactory.getUser = function(id) {
-			return $http.post(config.api_url + "/user/getUser", {user_id: id});
+		userFactory.getUser = function(id, select) {
+			return $http.post(config.api_url + "/user/getUser", {user_id: id, select: select});
 		};
 
 

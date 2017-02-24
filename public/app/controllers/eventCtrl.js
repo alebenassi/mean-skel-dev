@@ -1,7 +1,12 @@
 angular.module("controllers")
 	.controller("eventCreateController", ['Event', 'Auth', '$location', 'flash','$scope', 'User', function(Event, Auth, $location, flash, $scope, User) {
     var vm = this;            
-	User.getUsers().then(function(d) { 
+
+    var filters = new Object();
+    filters = { active: true, 
+                
+              };      
+	User.getUsers(filters).then(function(d) { 
     	$scope.guestList = d.data.users;    	
   	});
 
@@ -26,18 +31,18 @@ angular.module("controllers")
 }])
 
   .controller("eventIndexController", ['Event', 'Auth', '$location', 'flash', 'config','$scope', function(Event, Auth, $location, flash, config, $scope) {
-  	Event.getEvents().then(function(d) {
-    	$scope.events = d.data.events;    	        
-      //$scope.events.date = new Date(d.data.events.date);          
-  	});
-
-	  currentUser = Auth.getCurrentUser();
+    
+    currentUser = Auth.getCurrentUser();
     $scope.currentId = currentUser._id;
 
-    $scope.currentDate = new Date();
-    $scope.currentDate.toISOString();    
-    
 
+    //FILTERS
+    var filters = new Object();
+    filters = { user: currentUser._id, date: {"$gte": new Date()}};          
+
+  	Event.getEvents(filters).then(function(d) {
+    	$scope.events = d.data.events;    	              
+  	});	 
 
   }])
 
@@ -52,14 +57,13 @@ angular.module("controllers")
     Event.getEvent($routeParams.event_id).then(function(d) {
     	$scope.event = d.data.event;    	                
     	var guestList = d.data.event.guestList;
-    	var arrGuest = new Array();    	
-    	guestList.forEach(function(guest) {    		
-    		User.getUser(guest._id).then(function(u){
+    	var arrGuest = new Array();    	          
+    	guestList.forEach(function(guest) {    		        
+    		User.getUser(guest._id, "-_id -picture").then(function(u){
     			var g = new Object;
     			g['firstname'] = u.data.user.firstname;
     			g['lastname'] = u.data.user.lastname;
-    			g['accepted'] = guest.accepted    			
-    			//arrGuest.push(guest.accepted);
+    			g['accepted'] = guest.accepted    			    			
     			arrGuest.push(g);    			
 
     		});
@@ -86,8 +90,7 @@ angular.module("controllers")
 
 
 .controller("eventCancelController", ['Event', 'Auth', '$location', 'flash','$scope', '$routeParams', function(Event, Auth, $location, flash, $scope, $routeParams) {  
-    Event.cancelEvent($routeParams.event_id).then(function(response) {
-      //TODO SEND MAIL
+    Event.cancelEvent($routeParams.event_id).then(function(response) {      
       flash.setMessage(response.data.message);
           $location.path("/events");
       }, function(response) {           
@@ -97,43 +100,32 @@ angular.module("controllers")
 }])
 
  .controller("pendingEventController", ['Event', 'Auth', '$location', 'flash','$scope', '$routeParams','User', function(Event, Auth, $location, flash, $scope, $routeParams, User) {
-   
+
+    currentUser = Auth.getCurrentUser();    
+    $scope.currentId = currentUser._id;
+
+    //FILTERS
+    var filters = new Object();
+    filters = { active: true, 
+                date: {"$gte": new Date()},
+                guestList: {'_id': currentUser._id, 'accepted': 0},
+            };          
     
-    Event.getEvents().then(function(d) {
+    Event.getEvents(filters).then(function(d) {
     	$scope.events = d.data.events;    	
     	$scope.events.forEach(function (event){    		
-    		User.getUser(event.user).then(function(u){
+    		User.getUser(event.user, "-_id -email -picture").then(function(u){
     			event.userFirstname=u.data.user.firstname;
     			event.userLastname=u.data.user.lastname;
     		});
-    	});    	
-      //$scope.events.date = new Date(d.data.events.date);          
-  	});
-
-    currentUser = Auth.getCurrentUser();
-    $scope.currentId = currentUser._id;
-
-
-    $scope.search = function (event) {    	    
-	    var found = false;
-	    angular.forEach(event.guestList, function (guest) {          		    	    
-	    	if (guest._id == currentUser._id && guest.accepted == 0)	        
-	        found = true;
-	    });
-
-
-	    return found;
-	};	
-
-
-    $scope.currentDate = new Date();
-    $scope.currentDate.toISOString();    
+    	});    	      
+  	});    
 }])
 
 
  .controller("eventAcceptController", ['Event', 'Auth', '$location', 'flash','$scope', '$routeParams', function(Event, Auth, $location, flash, $scope, $routeParams) {  
+      
     Event.acceptEvent($routeParams.event_id, $routeParams.user_id).then(function(response) {
-      //TODO SEND MAIL
 
       flash.setMessage(response.data.message);      
           $location.path("/pending");
@@ -144,8 +136,7 @@ angular.module("controllers")
 }])
 
  .controller("eventRejectController", ['Event', 'Auth', '$location', 'flash','$scope', '$routeParams', function(Event, Auth, $location, flash, $scope, $routeParams) {  
-    Event.rejectEvent($routeParams.event_id, $routeParams.user_id).then(function(response) {
-      //TODO SEND MAIL
+    Event.rejectEvent($routeParams.event_id, $routeParams.user_id).then(function(response) {    
 
       flash.setMessage(response.data.message);      
           $location.path("/pending");
@@ -157,40 +148,28 @@ angular.module("controllers")
 
  .controller("upcomingEventController", ['Event', 'Auth', '$location', 'flash','$scope', '$routeParams','User', function(Event, Auth, $location, flash, $scope, $routeParams, User) {
    
+    currentUser = Auth.getCurrentUser();    
+
     
-    Event.getEvents().then(function(d) {
+    //FILTERS
+    var filters = new Object();
+    filters = { active: true, 
+                date: {"$gte": new Date()},
+                "$or": [{guestList: {'_id': currentUser._id, 'accepted': 1}}, {user:currentUser._id}]
+                
+            };      
+
+    Event.getEvents(filters).then(function(d) {
     	$scope.events = d.data.events;    	
     	$scope.events.forEach(function (event){    		
-    		User.getUser(event.user).then(function(u){
+    		User.getUser(event.user, "-_id -email -picture").then(function(u){
     			event.userFirstname=u.data.user.firstname;
     			event.userLastname=u.data.user.lastname;
     		});
-    	});    	
-      //$scope.events.date = new Date(d.data.events.date);          
-  	});
+    	});    	      
+  	});   
 
-    currentUser = Auth.getCurrentUser();
-    $scope.currentId = currentUser._id;
-
-
-    $scope.search = function (event) {    	    
-	    var found = false;
-	    if (event.user == currentUser._id) {
-	    	found = true;
-	    } else {
-		    angular.forEach(event.guestList, function (guest) {          		    	    
-		    	if (guest._id == currentUser._id && guest.accepted == 1)	        
-		        found = true;
-		    });
-		 }
-
-
-	    return found;
-	};	
-
-
-    $scope.currentDate = new Date();
-    $scope.currentDate.toISOString();    
+	     
 }])
 
 

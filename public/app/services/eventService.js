@@ -13,8 +13,8 @@ angular.module("services")
 		};
 
 		// get events
-		eventFactory.getEvents = function(eventData) {
-			return $http.get(config.api_url + "/events/get");
+		eventFactory.getEvents = function(filters) {			
+			return $http.post(config.api_url + "/events/get", {filters: filters});
 		};
 
 		// get events
