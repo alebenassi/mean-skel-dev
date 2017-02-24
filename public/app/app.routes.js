@@ -63,14 +63,14 @@ angular.module("app.routes", ["ngRoute"])
         authenticate: true
       })    
 
-      .when("/accept-event/:event_id/:user_id", {
+      .when("/accept-event/:event_id", {
         templateUrl: "app/views/events/accept.html",
         controller: "eventAcceptController",
         controllerAs: "event",
         authenticate: true
       })  
 
-      .when("/reject-event/:event_id/:user_id", {
+      .when("/reject-event/:event_id", {
         templateUrl: "app/views/events/reject.html",
         controller: "eventRejectController",
         controllerAs: "event",

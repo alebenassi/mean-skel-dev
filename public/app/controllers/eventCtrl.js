@@ -1,12 +1,8 @@
 angular.module("controllers")
 	.controller("eventCreateController", ['Event', 'Auth', '$location', 'flash','$scope', 'User', function(Event, Auth, $location, flash, $scope, User) {
     var vm = this;            
-
-    var filters = new Object();
-    filters = { active: true, 
-                
-              };      
-	User.getUsers(filters).then(function(d) { 
+   
+  	User.getActiveUsers().then(function(d) { 
     	$scope.guestList = d.data.users;    	
   	});
 
@@ -35,14 +31,9 @@ angular.module("controllers")
     currentUser = Auth.getCurrentUser();
     $scope.currentId = currentUser._id;
 
-
-    //FILTERS
-    var filters = new Object();
-    filters = { user: currentUser._id, date: {"$gte": new Date()}};          
-
-  	Event.getEvents(filters).then(function(d) {
-    	$scope.events = d.data.events;    	              
-  	});	 
+    Event.getMyEvents().then(function(d) {
+      $scope.events = d.data.events;                    
+    });
 
   }])
 
@@ -59,7 +50,7 @@ angular.module("controllers")
     	var guestList = d.data.event.guestList;
     	var arrGuest = new Array();    	          
     	guestList.forEach(function(guest) {    		        
-    		User.getUser(guest._id, "-_id -picture").then(function(u){
+    		User.getEventUser(guest._id).then(function(u){
     			var g = new Object;
     			g['firstname'] = u.data.user.firstname;
     			g['lastname'] = u.data.user.lastname;
@@ -102,19 +93,12 @@ angular.module("controllers")
  .controller("pendingEventController", ['Event', 'Auth', '$location', 'flash','$scope', '$routeParams','User', function(Event, Auth, $location, flash, $scope, $routeParams, User) {
 
     currentUser = Auth.getCurrentUser();    
-    $scope.currentId = currentUser._id;
-
-    //FILTERS
-    var filters = new Object();
-    filters = { active: true, 
-                date: {"$gte": new Date()},
-                guestList: {'_id': currentUser._id, 'accepted': 0},
-            };          
+    $scope.currentId = currentUser._id;    
     
-    Event.getEvents(filters).then(function(d) {
+    Event.getPendingEvents().then(function(d) {
     	$scope.events = d.data.events;    	
     	$scope.events.forEach(function (event){    		
-    		User.getUser(event.user, "-_id -email -picture").then(function(u){
+    		User.getEventUser(event.user).then(function(u){
     			event.userFirstname=u.data.user.firstname;
     			event.userLastname=u.data.user.lastname;
     		});
@@ -125,7 +109,7 @@ angular.module("controllers")
 
  .controller("eventAcceptController", ['Event', 'Auth', '$location', 'flash','$scope', '$routeParams', function(Event, Auth, $location, flash, $scope, $routeParams) {  
       
-    Event.acceptEvent($routeParams.event_id, $routeParams.user_id).then(function(response) {
+    Event.acceptEvent($routeParams.event_id).then(function(response) {
 
       flash.setMessage(response.data.message);      
           $location.path("/pending");
@@ -136,7 +120,7 @@ angular.module("controllers")
 }])
 
  .controller("eventRejectController", ['Event', 'Auth', '$location', 'flash','$scope', '$routeParams', function(Event, Auth, $location, flash, $scope, $routeParams) {  
-    Event.rejectEvent($routeParams.event_id, $routeParams.user_id).then(function(response) {    
+    Event.rejectEvent($routeParams.event_id).then(function(response) {    
 
       flash.setMessage(response.data.message);      
           $location.path("/pending");
@@ -149,20 +133,12 @@ angular.module("controllers")
  .controller("upcomingEventController", ['Event', 'Auth', '$location', 'flash','$scope', '$routeParams','User', function(Event, Auth, $location, flash, $scope, $routeParams, User) {
    
     currentUser = Auth.getCurrentUser();    
+  
 
-    
-    //FILTERS
-    var filters = new Object();
-    filters = { active: true, 
-                date: {"$gte": new Date()},
-                "$or": [{guestList: {'_id': currentUser._id, 'accepted': 1}}, {user:currentUser._id}]
-                
-            };      
-
-    Event.getEvents(filters).then(function(d) {
+    Event.getUpcomingEvents().then(function(d) {
     	$scope.events = d.data.events;    	
     	$scope.events.forEach(function (event){    		
-    		User.getUser(event.user, "-_id -email -picture").then(function(u){
+    		User.getEventUser(event.user).then(function(u){
     			event.userFirstname=u.data.user.firstname;
     			event.userLastname=u.data.user.lastname;
     		});

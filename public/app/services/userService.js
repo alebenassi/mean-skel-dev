@@ -18,15 +18,24 @@ angular.module("services")
 		};
 
 		// get users
-		userFactory.getUsers = function(filters) {
-			return $http.post(config.api_url + "/user/get", {filters:filters});
+		userFactory.getUsers = function() {
+			return $http.get(config.api_url + "/user/get");
+		};
+
+		// get active users
+		userFactory.getActiveUsers = function() {
+			return $http.get(config.api_url + "/user/getActiveUsers");
 		};
 
 		// get user
-		userFactory.getUser = function(id, select) {
-			return $http.post(config.api_url + "/user/getUser", {user_id: id, select: select});
+		userFactory.getUser = function(id) {
+			return $http.post(config.api_url + "/user/getUser", {user_id: id});
 		};
 
+		// get Event USER 
+		userFactory.getEventUser = function(id) {
+			return $http.post(config.api_url + "/user/getEventUser", {user_id: id});
+		};
 
 		return userFactory;
 	}]);
