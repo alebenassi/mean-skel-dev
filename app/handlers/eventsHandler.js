@@ -55,13 +55,10 @@ function createEvent(req, res){
     event.guestList.push(userId);   
   });
   
-
-  event.save(function(err){    
-    console.log(err);
+  event.save(function(err){        
     if (err) {            
         return res.status(400).json(errors.newError(errors.errorsEnum.CantCreateEvent, err));
-    }
-    
+    }    
     req.body.guestList.forEach(function(userId){    
       User
       .findOne({_id : userId})          
@@ -114,23 +111,21 @@ function createEvent(req, res){
  *    }
  *
  */
-function get(req, res) {
-  Event
-    .find()        
-    .exec(function(err, events){
+function get(req, res) {     
+   Event.get(req.body.filters, function(err, events){
       if (err){
         return res.status(400).send(errors.newError(errors.errorsEnum.CantGetEvent, err))
       }
       if (!events) {
         return res.status(401).json(errors.newError(errors.errorsEnum.CantGetEvent));
       }       
-
-      res.json({
+      
+     res.json({
         message: "Events get.",
         events: events
       });
 
-
+	
     });
 }
 
@@ -159,24 +154,22 @@ function get(req, res) {
  *    }
  *
  */
-function getEvent(req, res) {  
-  Event
-    .findOne({_id : req.body.event_id})          
-    .exec(function(err, event){
-      if (err){
+function getEvent(req, res) {    
+   Event.getEvent(req.body.event_id, function(err, event) {
+   	if (err){
         return res.status(400).send(errors.newError(errors.errorsEnum.CantGetEvent, err))
       }
       if (!event) {
         return res.status(401).json(errors.newError(errors.errorsEnum.CantGetEvent));
       }       
 
+
+
       res.json({
         message: "Event get.",
         event: event.asJson()
       });
-
-
-    });
+   });
 }
 
 /**
@@ -205,9 +198,9 @@ function getEvent(req, res) {
  *
  */
 function updateEvent(req, res) {  
-  Event
-  .findOneAndUpdate({_id: req.body._id}, {title:req.body.title, description:req.body.description}, function(err, eventUpdated){        
-    if (err) {            
+
+  Event.updateEvent(req.body._id,req.body.title,req.body.description, function(err, eventUpdated){
+  	if (err) {            
         return res.status(400).json(errors.newError(errors.errorsEnum.CantUpdateEvent, err));
     }    
     res.status(201).json({
@@ -215,6 +208,7 @@ function updateEvent(req, res) {
       event: eventUpdated.asJson()
     });
   });
+
 }
 
 
@@ -244,17 +238,13 @@ function updateEvent(req, res) {
  *
  */
 function cancelEvent(req, res) {  
-  Event
-  .findOneAndUpdate({_id: req.body.event_id}, {active:false}, function(err, eventUpdated){        
-    if (err) {            
+  Event.cancelEvent(req.body.event_id, function(err, eventUpdated){
+  	if (err) {            
         return res.status(400).json(errors.newError(errors.errorsEnum.CantCancelEvent, err));
     }    
-
-    eventUpdated.guestList.forEach(function(user){    
+  	eventUpdated.guestList.forEach(function(user){    
       if (user.accepted != 2) {  //If the user cancel, dont send mail
-        User
-        .findOne({_id : user._id})          
-        .exec(function(err, user){
+        User.getUser(user._id, "" , function(err, user){
             if (err){
               return res.status(400).send(errors.newError(errors.errorsEnum.CantSendMail, err))
             }
@@ -270,12 +260,12 @@ function cancelEvent(req, res) {
       }
     });
 
-
     res.status(201).json({
       message: "Event Cancelled!",
       event: eventUpdated.asJson()
     });
-  });
+  });        
+  
 }
 
 
@@ -305,25 +295,21 @@ function cancelEvent(req, res) {
  *
  */
 function acceptEvent(req, res) {    
-  Event
-  .findOneAndUpdate({_id: req.body.event_id, "guestList._id": req.body.user_id},  {$inc: {"guestList.$.accepted": 1}}, function(err, eventUpdated){        
-    if (err) {            
-        return res.status(400).json(errors.newError(errors.errorsEnum.CantAcceptEvent, err));
+  
+  Event.acceptEvent(req.body.event_id, req.body.user_id, function(err, eventUpdated){
+  	if (err) {            
+       return res.status(400).json(errors.newError(errors.errorsEnum.CantAcceptEvent, err));
     }    
 
     //First, I get the user who accepted the invitation, second i get the event's user.
-    User
-    .findOne({_id : req.body.user_id})          
-    .exec(function(err, userAccept){
+    User.getUser(req.body.user_id, "", function(err, userAccept){    
         if (err){
             return res.status(400).send(errors.newError(errors.errorsEnum.CantSendMail, err))
         }
         if (!userAccept) {
             return res.status(401).json(errors.newError(errors.errorsEnum.CantSendMail));
         }       
-        User
-        .findOne({_id : eventUpdated.user})          
-        .exec(function(err, userEvent){
+        User.getUser(eventUpdated.user, "", function(err,userEvent){
             if (err){
                 return res.status(400).send(errors.newError(errors.errorsEnum.CantSendMail, err))
             }
@@ -341,7 +327,7 @@ function acceptEvent(req, res) {
       message: "Invitation Accepted!",
       event: eventUpdated.asJson()
     });
-  });
+  });  
 }
 
 
@@ -371,32 +357,27 @@ function acceptEvent(req, res) {
  *
  */
 function rejectEvent(req, res) {    
-  Event
-  .findOneAndUpdate({_id: req.body.event_id, "guestList._id": req.body.user_id},  {$inc: {"guestList.$.accepted": 2}}, function(err, eventUpdated){        
-    if (err) {            
+  Event.rejectEvent(req.body.event_id, req.body.user_id, function(err, eventUpdated){
+  	  if (err) {            
         return res.status(400).json(errors.newError(errors.errorsEnum.CantRejectEvent, err));
     }    
 
     //First, I get the user who rejected the invitation, second i get the event's user.
-    User
-    .findOne({_id : req.body.user_id})          
-    .exec(function(err, userAccept){
+    User.getUser(req.body.user_id, "", function(err, userReject) {
         if (err){
             return res.status(400).send(errors.newError(errors.errorsEnum.CantSendMail, err))
         }
-        if (!userAccept) {
+        if (!userReject) {
             return res.status(401).json(errors.newError(errors.errorsEnum.CantSendMail));
         }       
-        User
-        .findOne({_id : eventUpdated.user})          
-        .exec(function(err, userEvent){
+        User.getUser(eventUpdated.user, "", function(err,userEvent){
             if (err){
                 return res.status(400).send(errors.newError(errors.errorsEnum.CantSendMail, err))
             }
             if (!userEvent) {
                 return res.status(401).json(errors.newError(errors.errorsEnum.CantSendMail));
             }       
-            mailer.rejectInvitationEmail(userAccept,userEvent, eventUpdated, function(error){                
+            mailer.rejectInvitationEmail(userReject,userEvent, eventUpdated, function(error){                
              // TODO: Handle error if exists
             });
         });
@@ -406,7 +387,7 @@ function rejectEvent(req, res) {
       message: "Invitation Rejected",
       event: eventUpdated.asJson()
     });
-  });
+  });    
 }
 
 exports.createEvent = createEvent;

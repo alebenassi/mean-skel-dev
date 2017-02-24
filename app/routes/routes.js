@@ -16,9 +16,7 @@ function setup(app, handlers) {
 
   // Without authentication
   usersRouter.post("/", handlers.users.createUser);
-  usersRouter.post("/activate", handlers.users.activateAccount);
-
-  usersRouter.get("/get", handlers.users.get);
+  usersRouter.post("/activate", handlers.users.activateAccount);  
 
   app.use("/api/users", usersRouter);
 
@@ -26,6 +24,7 @@ function setup(app, handlers) {
   // With Token authentication
   userRouter.use(token_authentication);
   userRouter.put("/", handlers.users.updateCurrentUser);
+  userRouter.post("/get", handlers.users.get);
   userRouter.post("/getUser", handlers.users.getUser);
 
   app.use("/api/user", userRouter);
@@ -43,7 +42,7 @@ function setup(app, handlers) {
   eventsRouter.post("/cancelEvent", handlers.events.cancelEvent);
   eventsRouter.post("/acceptEvent", handlers.events.acceptEvent); 
   eventsRouter.post("/rejectEvent", handlers.events.rejectEvent); 
-  eventsRouter.get("/get", handlers.events.get); 
+  eventsRouter.post("/get", handlers.events.get); 
 
   app.use("/api/events", eventsRouter);  
   

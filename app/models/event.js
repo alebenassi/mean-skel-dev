@@ -54,4 +54,41 @@ EventSchema.methods.asJson = function() {
 };
 
 
+EventSchema.statics.get = function(filters, callback) {  
+  this.find(filters).exec(function(err, events){  
+      callback(err, events);
+    
+    });
+};
+
+EventSchema.statics.getEvent = function(event_id, callback) {
+  this.findOne({_id : event_id}).exec(function(err, event){
+      callback(err, event);
+  });
+};
+
+EventSchema.statics.updateEvent = function(event_id,title,description, callback) {
+  this.findOneAndUpdate({_id: event_id}, {title:title, description:description}, function(err, eventUpdated){
+      callback(err,eventUpdated);
+  });
+};
+
+EventSchema.statics.cancelEvent = function(event_id, callback) {
+  this.findOneAndUpdate({_id: event_id}, {active:false}, function(err, eventUpdated){ 
+      callback(err,eventUpdated);
+  });
+};
+
+EventSchema.statics.acceptEvent = function(event_id, user_id, callback) {
+  this.findOneAndUpdate({_id: event_id, "guestList._id": user_id},  {$inc: {"guestList.$.accepted": 1}}, function(err, eventUpdated){  
+      callback(err,eventUpdated);
+  });
+};
+
+EventSchema.statics.rejectEvent = function(event_id, user_id, callback) {
+  this.findOneAndUpdate({_id: event_id, "guestList._id": user_id},  {$inc: {"guestList.$.accepted": 2}}, function(err, eventUpdated){  
+      callback(err,eventUpdated);
+  });
+};
+
 module.exports = mongoose.model("Event", EventSchema);

@@ -321,37 +321,21 @@ function activateAccount(req, res) {
  *    }
  *
  */
-function get(req, res) {
-  User
-    .find()    
-    .select("+active")
-    .exec(function(err, users){
-      if (err){
+function get(req, res) {   	
+    User.get(req.body.filters, function(err, users){
+	  if (err){
         return res.status(400).send(errors.newError(errors.errorsEnum.CantGetUser, err))
       }
       if (!users) {
         return res.status(401).json(errors.newError(errors.errorsEnum.CantGetUser));
-      } 
-
-      /*res.status(201).json({
-        message: "User created!",
-        user: user.asJson()
-      });
-      */
-      /*var usersJson = array();
-      users.forEach(function(user) {
-        userJson.push(user.asJson);
-      });
-
-      return usersJson;*/
+      }   
 
       res.json({
         message: "Users get.",
         users: users
-      });
-
-
+      });    	
     });
+
 }
 
 /**
@@ -380,22 +364,19 @@ function get(req, res) {
  *
  */
 function getUser(req, res) {  
-  User
-    .findOne({_id : req.body.user_id})    
-    .exec(function(err, user){
-      if (err){
-        return res.status(400).send(errors.newError(errors.errorsEnum.CantGetUser, err))
-      }
-      if (!user) {
-        return res.status(401).json(errors.newError(errors.errorsEnum.CantGetUser));
-      }       
 
-      res.json({
-        message: "User get.",
-        user: user.asJson()
-      });
+  User.getUser(req.body.user_id, req.body.select, function(err, user) {  
+	  if (err){
+	    return res.status(400).send(errors.newError(errors.errorsEnum.CantGetUser, err))
+	  }
+	  if (!user) {
+	    return res.status(401).json(errors.newError(errors.errorsEnum.CantGetUser));
+	  }       
 
-
+	  res.json({
+	    message: "User get.",
+	    user: user.asJson()
+	  });
     });
 }
 

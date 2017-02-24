@@ -3,6 +3,8 @@ var sendgrid = require('sendgrid')(config.sendgrid.API_KEY);
 
 
 function sendActivationEmail(user, done) {	
+
+
 	try {
 		var link = config.base_url + "/activate/" + user.activation_token;
 
@@ -27,10 +29,10 @@ function sendActivationEmail(user, done) {
 }
 
 function sendInvitationEmail(user, event, done) {		
-	
+
 
 	try {
-		var link = config.base_url + "/pending/";
+		var link = config.base_url + "/pending";
 
 		var email     = new sendgrid.Email({
 			to:       user.email,
@@ -63,7 +65,7 @@ function rejectInvitationEmail(userReject,userEvent, event, done) {
 			from:     'no-reply@meanskel.com',
 			fromname: 'MEAN skel',
 			subject:  'Reject Invitation',
-			html:     "<p>Hi " + userEvent.firstname + "</p><p>The user " + userReject.firstname + " " + userReject.lastname + "(" + userReject.email + ")" + " rejects the invitation of your event " + event.title + "></p>"
+			html:     "<p>Hi " + userEvent.firstname + "</p><p>The user " + userReject.firstname + " " + userReject.lastname + " (" + userReject.email + ")" + " rejects the invitation of your event " + event.title + "</p>"
 		});
 
 		sendgrid.send(email, function(err, json) {
@@ -81,6 +83,7 @@ function rejectInvitationEmail(userReject,userEvent, event, done) {
 
 function acceptInvitationEmail(userAccept, userEvent, event, done) {		
 
+
 	try {		
 		
 		var email     = new sendgrid.Email({
@@ -88,7 +91,7 @@ function acceptInvitationEmail(userAccept, userEvent, event, done) {
 			from:     'no-reply@meanskel.com',
 			fromname: 'MEAN skel',
 			subject:  'Accept Invitation',
-			html:     "<p>Hi " + userEvent.firstname + "</p><p>The user " + userAccept.firstname + " " + userAccept.lastname + "(" + userAccept.email + ")" + " accepts the invitation of your event " + event.title + "></p>"
+			html:     "<p>Hi " + userEvent.firstname + "</p><p>The user " + userAccept.firstname + " " + userAccept.lastname + " (" + userAccept.email + ")" + " accepts the invitation of your event " + event.title + "</p>"
 		});
 
 		sendgrid.send(email, function(err, json) {
@@ -106,8 +109,8 @@ function acceptInvitationEmail(userAccept, userEvent, event, done) {
 }
 
 function cancelEventEmail(user, event, done) {	
+
 	
-	console.log("<p>Hi " + user.firstname + "</p><p>The event " + event.title + " has been cancelled. Please contact the administrator.</p>");
 	try {		
 
 		var email     = new sendgrid.Email({

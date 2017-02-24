@@ -118,4 +118,17 @@ UserSchema.statics.activateAccount = function(token, callback) {
   });
 };
 
+
+UserSchema.statics.get = function(filters, callback) {  
+  this.find(filters).select("+active").exec(function(err, users){
+      callback(err, users);
+    });
+};
+
+UserSchema.statics.getUser = function(user_id, selectFields, callback) {
+  this.findOne({_id : user_id}).select(selectFields).exec(function(err, user){
+      callback(err, user);
+  });
+};
+
 module.exports = mongoose.model("User", UserSchema);
